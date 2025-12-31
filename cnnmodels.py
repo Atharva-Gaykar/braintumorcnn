@@ -3,6 +3,8 @@ from PIL import Image
 import numpy as np
 import io
 
+print("cnnmodels.py loaded")
+
 CLASS_NAMES = ['glioma', 'meningioma', 'no tumor', 'pituitary']
 
 # Load models ONCE
