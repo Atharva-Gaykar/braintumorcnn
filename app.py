@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
-from BrainTumorDataCnnModels import detect_and_classify
+from cnnmodels import detect_and_classify
 
 app = FastAPI(title="Brain Tumor CNN Service")
 
