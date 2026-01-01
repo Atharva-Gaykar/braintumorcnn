@@ -1,0 +1,24 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+
+BrainTumorDetectionModel/
+.env
+
+# ML artifacts (if regenerated)
+logs/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+
+# OS
+.DS_Store
+Thumbs.db
