@@ -3,15 +3,10 @@ from PIL import Image
 import numpy as np
 import io
 
-print("cnnmodels.py loaded")
-
 CLASS_NAMES = ['glioma', 'meningioma', 'no tumor', 'pituitary']
 
 # Load models ONCE
-detection_model = TFSMLayer(
-    "BrainTumorDetectionModel/model",
-    call_endpoint="serving_default"
-)
+
 
 classification_model = TFSMLayer(
     "BrainTumorClassificationModel/model",
@@ -25,27 +20,26 @@ def preprocess_image_bytes(image_bytes, target_size=(224, 224)):
     image = np.expand_dims(image, axis=0)
     return image
 
-def detect_and_classify(image_bytes):
+def classify_tumor(image_bytes):
+    # 1. Preprocess the image
     image = preprocess_image_bytes(image_bytes)
 
-    # Detection
-    detect_pred = detection_model(image)
-    has_tumor = bool(detect_pred["output_0"][0][0])
-
-    if not has_tumor:
-        return {
-            "has_tumor": False,
-            "tumor_type": "no tumor",
-            "confidence": 100.0
-        }
-
-    # Classification
-    class_pred = classification_model(image)["output_0"]
-    class_pred = class_pred.numpy()
+    # 2. Run Classification directly
+    # Removed the detection_model block entirely
+    class_pred_tensor = classification_model(image)["output_0"]
+    class_pred = class_pred_tensor.numpy()
+    
+    # 3. Get the index of the highest confidence score
     idx = int(np.argmax(class_pred))
+    confidence = float(np.max(class_pred) * 100)
+    tumor_type = CLASS_NAMES[idx]
+
+    # 4. Determine has_tumor status based on the classification result
+    # We assume "no tumor" is a string in your CLASS_NAMES list
+    is_tumor_detected = tumor_type.lower() != "no tumor"
 
     return {
-        "has_tumor": True,
-        "tumor_type": CLASS_NAMES[idx],
-        "confidence": float(np.max(class_pred) * 100)
+        "has_tumor": is_tumor_detected,
+        "tumor_type": tumor_type,
+        "confidence": confidence
     }
