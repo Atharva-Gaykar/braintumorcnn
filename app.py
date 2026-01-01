@@ -1,15 +1,15 @@
 from fastapi import FastAPI, UploadFile, File
-from cnnmodels import detect_and_classify
+from cnnmodels import classify_tumor
 
 app = FastAPI(title="Brain Tumor CNN Service")
 
-@app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+@app.post("/classify")
+async def classify(file: UploadFile = File(...)):
     image_bytes = await file.read()
-    result = detect_and_classify(image_bytes)
+    result = classify_tumor(image_bytes)
     return result
 
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="127.0.0.1", port=8500)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8500)
